@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:identify_mobile_number_operator/ad_helper.dart';
+import 'package:identify_mobile_number_operator/prefix.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,6 +16,8 @@ class _HomePageState extends State<HomePage> {
   //===========================================
   BodyBannerAd bodyAd = BodyBannerAd();
   BottomNavBannerAd bottomNavAd = BottomNavBannerAd();
+
+  // provider.
 
   @override
   void initState() {
@@ -70,10 +73,14 @@ class _HomePageState extends State<HomePage> {
                             border: InputBorder.none,
                             hintText: "Enter your mobile number here...",
                           ),
-                          onChanged: (val) => _checkInputVal(val),
-                          onSubmitted: (val) => _checkInputVal(val),
-                          onEditingComplete: () =>
-                              _checkInputVal(_searchInputController.text),
+                          onChanged: (val) {
+                            _checkInputVal(val: val);
+                            setState(() {});
+                          },
+                          onSubmitted: (val) {
+                            _checkInputVal(val: val);
+                            setState(() {});
+                          },
                         ),
                       ),
                     ),
@@ -82,8 +89,10 @@ class _HomePageState extends State<HomePage> {
                       child: Material(
                         color: Colors.purple,
                         child: IconButton(
-                          onPressed: () =>
-                              _checkInputVal(_searchInputController.text),
+                          onPressed: () {
+                            _checkInputVal(val: _searchInputController.text);
+                            setState(() {});
+                          },
                           splashColor: Colors.purple.withOpacity(0.5),
                           icon: const Icon(
                             Icons.search_rounded,
@@ -97,25 +106,31 @@ class _HomePageState extends State<HomePage> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Text(
-                  "Your Mobile Number Belong to: $provider",
-                  style: const TextStyle(
-                    color: Colors.black54,
-                    fontWeight: FontWeight.bold,
+                child: RichText(
+                  text: TextSpan(
+                    text: "Your Mobile Number Provider is: ",
+                    style: TextStyle(fontSize: 12.0, color: Colors.grey[900]),
+                    children: [
+                      TextSpan(
+                        text: _provider,
+                        style: const TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.purple,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
               const Spacer(),
               bodyAd.isBodyBannerAdLoaded
-                  ? StatefulBuilder(
-                      builder: (context, setState) {
-                        return SizedBox(
+                  ? StatefulBuilder(builder: (context, setState) {
+                      return SizedBox(
                           width: bodyAd.bodyBannerAd.size.width.toDouble(),
                           height: bodyAd.bodyBannerAd.size.height.toDouble(),
-                          child: AdWidget(ad: bodyAd.bodyBannerAd),
-                        );
-                      },
-                    )
+                          child: AdWidget(ad: bodyAd.bodyBannerAd));
+                    })
                   : const SizedBox(),
               const Spacer(),
               const Padding(
@@ -151,26 +166,23 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: bottomNavAd.isBottomNavBannerAdLoaded
-          ? StatefulBuilder(
-              builder: (context, setState) {
-                return SizedBox(
+          ? StatefulBuilder(builder: (context, setState) {
+              return SizedBox(
                   width: bottomNavAd.bottomNavBannerAd.size.width.toDouble(),
                   height: bottomNavAd.bottomNavBannerAd.size.height.toDouble(),
-                  child: AdWidget(ad: bottomNavAd.bottomNavBannerAd),
-                );
-              },
-            )
+                  child: AdWidget(ad: bottomNavAd.bottomNavBannerAd));
+            })
           : null,
     );
   }
 }
 
-// NB: Due to the mobile number portability introduced in 2013 in Nigeria, a person can also port their numbers from any of the said providers to another, so the list does not guarantee that all names using the above prefixes must be fixated to the same networks as listed.
+// NB: Due to the mobile number portability introduced in 2013 in Nigeria, a person can also port their numbers from any of the said providers to another, so this does not guarantee that all numbers using the above prefixes must be fixated to the same networks as listed.
 
 //================================================================
-//
+// VALUES FOR THE IMGS AND TEXT FEILD
 //================================================================
-String provider = '';
+String _provider = '';
 TextEditingController _searchInputController = TextEditingController();
 List<Map<String, String>> _imgName = [
   {'img': 'mtn.png', 'ussd': '*663#'},
@@ -183,8 +195,21 @@ List<Map<String, String>> _imgName = [
 //================================================================
 // TEXT INPUT AND SEARCH BTN FUNCTION
 //================================================================
-_checkInputVal(String val) {
-  print(val);
+_checkInputVal({required String val}) {
+  _provider = '';
+  String first5Val = '';
+  if (val.length < 4) return;
+  String first4Val = val.substring(0, 4);
+  if (val.length > 5) first5Val = val.substring(0, 5);
+  for (Map<String, Object> i in mobileNetworkPrefix) {
+    List<String> prefix = i['prefix'] as List<String>;
+    for (String y in prefix) {
+      if (y == first4Val || y == first5Val) {
+        _provider = i['networkProvider'].toString();
+        return;
+      }
+    }
+  }
 }
 
 //================================================================
