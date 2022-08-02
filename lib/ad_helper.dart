@@ -10,7 +10,7 @@ class AdHelper {
   //===================================================
   static String get bodyBannerAd {
     if (Platform.isAndroid) {
-      return "ca-app-pub-3940256099942544/6300978111";
+      return "ca-app-pub-3864057106280422/4705263008";
     } else {
       throw UnsupportedError('Unsupport Platform');
     }
@@ -21,7 +21,7 @@ class AdHelper {
   //===================================================
   static String get bottomNavBannerAd {
     if (Platform.isAndroid) {
-      return "ca-app-pub-3940256099942544/6300978111";
+      return "ca-app-pub-3864057106280422/9243273818";
     } else {
       throw UnsupportedError('Unsupport Platform');
     }
