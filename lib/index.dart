@@ -1,11 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:identify_mobile_number_operator/ad_helper.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  //===========================================
+  // INITIALIZIN MY BODY & BOTTOM NAV BANNER AD
+  //===========================================
+  BodyBannerAd bodyAd = BodyBannerAd();
+  BottomNavBannerAd bottomNavAd = BottomNavBannerAd();
+
+  @override
+  void initState() {
+    super.initState();
+    bodyAd.createBodyBannerAd(setState: () => setState(() {}));
+    bottomNavAd.createBottomNavBannerAd(setState: () => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    bodyAd.bodyBannerAd.dispose();
+    bottomNavAd.bottomNavBannerAd.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Identify Your Mobile Number provider"),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: bottomNavAd.isBottomNavBannerAdLoaded
+          ? StatefulBuilder(
+              builder: (context, setState) {
+                return SizedBox(
+                  width: bottomNavAd.bottomNavBannerAd.size.width.toDouble(),
+                  height: bottomNavAd.bottomNavBannerAd.size.height.toDouble(),
+                  child: AdWidget(ad: bottomNavAd.bottomNavBannerAd),
+                );
+              },
+            )
+          : null,
+    );
   }
 }
 
