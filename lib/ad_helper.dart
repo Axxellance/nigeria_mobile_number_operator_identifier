@@ -31,6 +31,30 @@ class AdHelper {
 //===========================================
 // LOAD BOTTOM  NAV BANNER AD
 //===========================================
+class BodyBannerAd {
+  late BannerAd bodyBannerAd;
+  bool isBodyBannerAdLoaded = false;
+
+  createBodyBannerAd({required Function setState}) {
+    bodyBannerAd = BannerAd(
+      size: AdSize.largeBanner,
+      request: const AdRequest(),
+      adUnitId: AdHelper.bodyBannerAd,
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          isBodyBannerAdLoaded = true;
+          setState();
+        },
+        onAdFailedToLoad: (ad, error) => bodyBannerAd.dispose(),
+      ),
+    );
+    bodyBannerAd.load();
+  }
+}
+
+//===========================================
+// LOAD BOTTOM  NAV BANNER AD
+//===========================================
 class BottomNavBannerAd {
   late BannerAd bottomNavBannerAd;
   bool isBottomNavBannerAdLoaded = false;
@@ -49,29 +73,5 @@ class BottomNavBannerAd {
       ),
     );
     bottomNavBannerAd.load();
-  }
-}
-
-//===========================================
-// LOAD BOTTOM  NAV BANNER AD
-//===========================================
-class BodyBannerAd {
-  late BannerAd bodyBannerAd;
-  bool isBodyBannerAdLoaded = false;
-
-  createBodyBannerAd({required Function setState}) {
-    bodyBannerAd = BannerAd(
-      size: AdSize.banner,
-      request: const AdRequest(),
-      adUnitId: AdHelper.bodyBannerAd,
-      listener: BannerAdListener(
-        onAdLoaded: (_) {
-          isBodyBannerAdLoaded = true;
-          setState();
-        },
-        onAdFailedToLoad: (ad, error) => bodyBannerAd.dispose(),
-      ),
-    );
-    bodyBannerAd.load();
   }
 }
